@@ -5,17 +5,17 @@ class Api::V1::ProductsController < ApplicationController
 
   def index
     @products = Product.all
-    render json: ProductSerializer.new(@products).serializable_hash
+    render json: ProductSerializer.new(@products, include: [:user]).serializable_hash
   end
 
   def show
-    render json: ProductSerializer.new(@product).serializable_hash
+    render json: ProductSerializer.new(@product, include: [:user]).serializable_hash
   end
 
   def create
     product = current_user.products.build(product_params)
     if product.save
-      render json: ProductSerializer.new(product).serializable_hash, status: :created
+      render json: ProductSerializer.new(product, include: [:user]).serializable_hash, status: :created
     else
       render json: {errors: product.errors}, status: :unprocessable_entity
     end
@@ -23,7 +23,7 @@ class Api::V1::ProductsController < ApplicationController
 
   def update
     if @product.update(product_params)
-      render json: ProductSerializer.new(@product).serializable_hash
+      render json: ProductSerializer.new(@product, include: [:user]).serializable_hash
     else
       render json: @product.errors, status: :unprocessable_entity
     end
