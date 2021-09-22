@@ -17,6 +17,7 @@ class Api::V1::OrdersController < ApplicationController
   def create
     order = current_user.orders.build(order_params)
     if order.save
+      OrderMailer.send_confirmation(order).deliver
       render json: order, status: 201
     else
       render json: {errors: order.errors}, status: 422
@@ -25,6 +26,6 @@ class Api::V1::OrdersController < ApplicationController
 
   private
   def order_params
-    params.require(:order).permit(:total, product_ids: [])
+    params.require(:order).permit(product_ids: [])
   end
 end
