@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   validates :price, presence: true, numericality: {greater_than_or_equal_to: 0}
 
   belongs_to :user
+  has_many :placements, dependent: :destroy
+  has_many :orders, through: :placements
 
   scope :filter_by_title, ->(keyword) do
     where('lower(title) LIKE ?', "%#{keyword.downcase}%")
