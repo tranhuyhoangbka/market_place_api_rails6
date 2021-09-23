@@ -6,6 +6,8 @@ class Product < ApplicationRecord
   has_many :placements, dependent: :destroy
   has_many :orders, through: :placements
 
+  paginates_per 2
+
   scope :filter_by_title, ->(keyword) do
     where('lower(title) LIKE ?', "%#{keyword.downcase}%")
   end

@@ -4,8 +4,17 @@ class Api::V1::ProductsController < ApplicationController
   before_action :check_owner, only: %i(update destroy)
 
   def index
-    @products = Product.search(params)
-    render json: ProductSerializer.new(@products, include: [:user]).serializable_hash
+    @products = Product.search(params).page(current_page).per(per_page)
+    options = {
+      links: {
+        first: api_v1_products_path(page: 1),
+        last: api_v1_products_path(page: @products.total_pages),
+        prev: api_v1_products_path(page: @products.prev_page),
+        next: api_v1_products_path(page: @products.next_page)
+      },
+      include: [:user]
+    }
+    render json: ProductSerializer.new(@products, options).serializable_hash
   end
 
   def show
