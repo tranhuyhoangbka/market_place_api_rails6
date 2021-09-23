@@ -3,6 +3,8 @@ class Order < ApplicationRecord
   has_many :placements, dependent: :destroy
   has_many :products, through: :placements
 
+  validates_with EnoughProductsValidator
+
   before_validation :set_total!
 
   def set_total!
